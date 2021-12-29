@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SyncToPc</string>
+    <string name="no_access">Kein Zugriff!</string>
 </resources>
