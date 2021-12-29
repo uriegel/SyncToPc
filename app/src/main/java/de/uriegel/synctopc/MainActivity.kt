@@ -34,11 +34,11 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
             if (Build.VERSION.SDK_INT >= 30 && !hasAllFilesPermission()) {
                 val uri = Uri.parse("package:${BuildConfig.APPLICATION_ID}")
-                startActivity(Intent( Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri))
+                activityRequest.launch(Intent( Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri))
             }
 
             //val path = Environment.getExternalStorageDirectory().toString() + "/DCIM/Camera"
-            val path = Environment.getExternalStorageDirectory().toString() + "/Pictures"
+            val path = Environment.getExternalStorageDirectory().toString() + "/"
             Log.d("Files", "Path: $path")
             val directory = File(path)
             val files = directory.listFiles()
