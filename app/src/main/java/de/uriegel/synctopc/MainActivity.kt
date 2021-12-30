@@ -38,14 +38,18 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             }
 
             //val path = Environment.getExternalStorageDirectory().toString() + "/DCIM/Camera"
-            val path = Environment.getExternalStorageDirectory().toString() + "/"
+            val path = Environment.getExternalStorageDirectory().toString() + "/Transfer"
             Log.d("Files", "Path: $path")
             val directory = File(path)
-            val files = directory.listFiles()
-            Log.d("Files", "Size: " + files?.size)
-            for (i in files!!.indices) {
-                Log.d("Files", "FileName:" + files[i].name)
+            directory.listFiles()?.let {
+                Log.d("Files", "Size: " + it.size)
+                it.filter { file -> !file.isDirectory }
+                  .forEach { file ->
+                        Log.d("Files", "FileName:" + file.name)
+                  }
             }
+            val res = getString("http://illmatic:8080/Requests/testreq")
+            Log.d("res", res)
         }
     }
 
