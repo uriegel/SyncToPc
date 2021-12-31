@@ -8,16 +8,20 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
+import android.text.Layout
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import de.uriegel.activityextensions.ActivityRequest
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity(), CoroutineScope {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,17 +48,22 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
     fun onStart(view: View) {
         launch {
-            //val path = Environment.getExternalStorageDirectory().toString() + "/DCIM/Camera"
-            val path = "${Environment.getExternalStorageDirectory()}/Transfer"
-            Log.d("Files", "Path: $path")
-            val directory = File(path)
-            directory.listFiles()?.let {
-                Log.d("Files", "Size: " + it.size)
-                it.filter { file -> !file.isDirectory }
-                    .forEach { file ->
-                        Log.d("Files", "FileName:" + file.name)
-                        uploadFile("http://illmatic:8080/upload?file=${file.name}", file)
+            try {
+                status.text = ""
+                val path = "${Environment.getExternalStorageDirectory()}/Transfer"
+                Log.d("Files", "Path: $path")
+                val directory = File(path)
+                directory.listFiles()
+                    .let {
+                        Log.d("Files", "Size: " + it.size)
+                        it.filter { file -> !file.isDirectory }
+                            .sortedBy { file -> file.name }
+                            .forEach { file ->
+                                uploadFile("http://illmatic:8080/upload?file=${file.name}", file)
+                            }
                     }
+            } catch(err: Exception) {
+                status.text = err.toString()
             }
         }
     }

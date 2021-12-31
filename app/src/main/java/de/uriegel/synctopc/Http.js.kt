@@ -11,17 +11,37 @@ suspend fun uploadFile(urlString: String, file: File) {
         val url = URL(urlString)
         val connection = url.openConnection() as HttpURLConnection
         connection.requestMethod = "POST"
+        connection.setFixedLengthStreamingMode(file.length())
         connection.doInput = true
 
         val inputStream = file.inputStream()
-        inputStream.copyTo(connection.outputStream, 8000)
+        inputStream.copyTo(connection.outputStream)
+        inputStream.close()
+
+        val result = connection.responseCode
+        if (result != 200)
+            throw java.lang.Exception("$result ${connection.responseMessage}")
+
+        connection.inputStream.close()
+    }
+}
+
+suspend fun sendeListe(urlString: String, liste: String) {
+    return withContext(Dispatchers.IO) {
+        val url = URL(urlString)
+        val connection = url.openConnection() as HttpURLConnection
+        connection.requestMethod = "POST"
+        connection.doInput = true
+
+        val writer = BufferedWriter(OutputStreamWriter(connection.outputStream))
+        writer.write(liste)
+        writer.close()
 
         val result = connection.responseCode
         if (result != 200)
             throw java.lang.Exception("$result ${connection.responseMessage}")
     }
 }
-
 
 private fun readStream(inString: InputStream): String {
     val response = StringBuffer()
